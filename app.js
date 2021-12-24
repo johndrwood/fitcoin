@@ -12,6 +12,7 @@ async function connect() {
     console.log("Could not connect to test server")
   }
 }
+connect()
 
 async function disconnect() {
   client.disconnect()
