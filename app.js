@@ -30,11 +30,12 @@ async function getBalance(wallet) {
 }
 
 async function sendFunds(wallet1, amount, wallet2) {
+  const receivingWallet = typeof(wallet2) == 'string' ? wallet2 : wallet2.address
   const prepared = await client.autofill({
     "TransactionType": "Payment",
     "Account": wallet1.address,
     "Amount": amount,
-    "Destination": wallet2.address
+    "Destination": receivingWallet
   })
 
   const max_ledger = prepared.LastLedgerSequence
