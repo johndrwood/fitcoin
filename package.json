@@ -2,6 +2,7 @@
   "name": "fitcoin",
   "version": "1.0.0",
   "devDependencies": {
+    "ws": "^8.4.0",
     "xrpl": "^2.1.0"
   }
 }
