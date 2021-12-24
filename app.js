@@ -45,5 +45,5 @@ async function sendFunds(wallet1, amount, wallet2) {
 
   signed = wallet1.sign(prepared)
   const tx = await client.submitAndWait(signed.tx_blob)
-  console.log(tx)
+  console.log("Completed transaction details:", tx)
 }
