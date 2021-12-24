@@ -24,12 +24,8 @@ async function createAndFundWallet() {
 }
 
 async function getBalance(wallet) {
-  const response = await client.request({
-    "command": "account_info",
-    "account": wallet.address,
-    "ledger_index": "validated"
-  })
-  console.log(`Wallet balance is ${response.result.account_data.Balance}`)
+  let response = await client.getXrpBalance(wallet.address)
+  console.log(`Wallet balance is ${response}`)
 }
 
 async function sendFunds(wallet1, amount, wallet2) {
