@@ -25,7 +25,8 @@ async function createAndFundWallet() {
 }
 
 async function getBalance(wallet) {
-  let response = await client.getXrpBalance(wallet.address)
+  const walletAddress = typeof(wallet) == 'string' ? wallet : wallet.address
+  let response = await client.getXrpBalance(walletAddress)
   console.log(`Wallet balance is ${response}`)
 }
 
