@@ -30,6 +30,18 @@ const handleResponse = function(data) {
   }
 }
 
+const handleTransaction = function(data) {
+  let transactionMessage = "You have been sent "
+  switch (data.transaction.TransactionType) {
+    case "Payment":
+      transactionMessage += `a payment of ${data.transaction.Amount} from ${data.transaction.Account}.`
+      break;
+    default:
+      transactionMessage += "a transaction of uknown type."
+  }
+  console.log(transactionMessage)
+}
+
 let autoid_n = 0
 function api_request(options) {
   if (!options.hasOwnProperty("id")) {
@@ -52,7 +64,8 @@ function api_request(options) {
 }
 
 const WS_HANDLERS = {
-  "response": handleResponse
+  "response": handleResponse,
+  "transaction": handleTransaction
   // Fill this out with your handlers in the following format:
   // "type": function(event) { /* handle event of this type */ }
 }
