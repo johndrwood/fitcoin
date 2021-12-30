@@ -31,15 +31,19 @@ const handleResponse = function(data) {
 }
 
 const handleTransaction = function(data) {
-  let transactionMessage = "You have been sent "
   switch (data.transaction.TransactionType) {
     case "Payment":
-      transactionMessage += `a payment of ${data.transaction.Amount} from ${data.transaction.Account}.`
+      console.log(`You have been sent a payment of ${data.transaction.Amount} from ${data.transaction.Account}.`)
       break;
+    case "CheckCreate":
+      console.log(`You have been sent a check for up to ${data.transaction.SendMax} from ${data.transaction.Account}.\n
+        Transaction hash is '${data.transaction.hash}'`)
+      break;
+    case "CheckCash":
+      console.log(`You have cashed a check for ${data.transaction.Amount} from ${data.transaction.Account}.`)
     default:
-      transactionMessage += "a transaction of uknown type."
+      console.log("You have been sent a transaction of unknown type.")
   }
-  console.log(transactionMessage)
 }
 
 let autoid_n = 0
