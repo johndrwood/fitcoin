@@ -36,8 +36,7 @@ const handleTransaction = function(data) {
       console.log(`You have been sent a payment of ${data.transaction.Amount} from ${data.transaction.Account}.`)
       break;
     case "CheckCreate":
-      console.log(`You have been sent a check for up to ${data.transaction.SendMax} from ${data.transaction.Account}.\n
-        Transaction hash is '${data.transaction.hash}'`)
+      console.log(`You have been sent a check for up to ${data.transaction.SendMax} from ${data.transaction.Account}.\nTransaction hash is '${data.transaction.hash}'`)
       break;
     case "CheckCash":
       console.log(`You have cashed a check for ${data.transaction.Amount} from ${data.transaction.Account}.`)
