@@ -25,17 +25,15 @@ async function createAndFundWallet() {
 }
 
 async function getBalance(wallet) {
-  const walletAddress = typeof(wallet) == 'string' ? wallet : wallet.address
-  let response = await client.getXrpBalance(walletAddress)
+  let response = await client.getXrpBalance(getWalletAddress(wallet))
   console.log(`Wallet balance is ${response}`)
 }
 
-async function sendFunds(wallet1, amount, wallet2, asCheck = false) {
-  const receivingWallet = typeof(wallet2) == 'string' ? wallet2 : wallet2.address
+async function sendFunds(sendingWallet, amount, receivingWallet, asCheck = false) {
   let transactionData = {
     "TransactionType": "Payment",
-    "Account": wallet1.address,
-    "Destination": receivingWallet
+    "Account": sendingWallet.address,
+    "Destination": getWalletAddress(receivingWallet)
   }
   if (asCheck) {
     transactionData.TransactionType = "CheckCreate"
@@ -43,14 +41,8 @@ async function sendFunds(wallet1, amount, wallet2, asCheck = false) {
   } else {
     transactionData.Amount = amount
   }
-  const prepared = await client.autofill(transactionData)
-
-  const max_ledger = prepared.LastLedgerSequence
-  console.log("Prepared transaction details:", prepared)
-
-  signed = wallet1.sign(prepared)
-  const tx = await client.submitAndWait(signed.tx_blob)
-  console.log("Completed transaction details:", tx)
+  const preparedTransaction = await client.autofill(transactionData)
+  signTransaction(sendingWallet, preparedTransaction)
 }
 
 async function cashCheck(wallet, amount, transactionHash) {
@@ -58,17 +50,23 @@ async function cashCheck(wallet, amount, transactionHash) {
     "command": "tx",
     "transaction": transactionHash
   })
-  const checkID = transactionData.result.meta.AffectedNodes.find(n => n.CreatedNode.LedgerEntryType === 'Check').CreatedNode.LedgerIndex
-
-  const prepared = await client.autofill({
+  const checkID = transactionData.result.meta.AffectedNodes.find(n => n.CreatedNode?.LedgerEntryType === 'Check').CreatedNode.LedgerIndex
+  const preparedTransaction = await client.autofill({
     "TransactionType": "CheckCash",
     "Account": wallet.address,
     "Amount": amount,
     "CheckID": checkID
   })
-  console.log("Prepared transaction details:", prepared)
+  signTransaction(wallet, preparedTransaction)
+}
 
-  signed = wallet.sign(prepared)
+function getWalletAddress(wallet) {
+  return typeof(wallet) == 'string' ? wallet : wallet.address
+}
+
+async function signTransaction(wallet, preparedTransaction) {
+  console.log("preparedTransaction transaction details:", preparedTransaction)
+  signed = wallet.sign(preparedTransaction)
   const tx = await client.submitAndWait(signed.tx_blob)
   console.log("Completed transaction details:", tx)
 }
