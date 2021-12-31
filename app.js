@@ -42,7 +42,7 @@ async function sendFunds(sendingWallet, amount, receivingWallet, asCheck = false
     transactionData.Amount = amount
   }
   const preparedTransaction = await client.autofill(transactionData)
-  signTransaction(sendingWallet, preparedTransaction)
+  signAndSubmitTransaction(sendingWallet, preparedTransaction)
 }
 
 async function cashCheck(wallet, amount, transactionHash) {
@@ -57,7 +57,7 @@ async function cashCheck(wallet, amount, transactionHash) {
     "Amount": amount,
     "CheckID": checkID
   })
-  signTransaction(wallet, preparedTransaction)
+  signAndSubmitTransaction(wallet, preparedTransaction)
 }
 
 async function createEscrow(sendingWallet, amount, receivingWallet, condition, cancelAfter) {
@@ -69,7 +69,7 @@ async function createEscrow(sendingWallet, amount, receivingWallet, condition, c
     "Condition": condition,
     "CancelAfter": cancelAfter
   })
-  signTransaction(sendingWallet, preparedTransaction)
+  signAndSubmitTransaction(sendingWallet, preparedTransaction)
 }
 
 async function completeEscrow(completingWallet, condition, fulfillment, offerSequence) {
@@ -81,14 +81,14 @@ async function completeEscrow(completingWallet, condition, fulfillment, offerSeq
     "Fulfillment": fulfillment,
     "OfferSequence": offerSequence
   })
-  signTransaction(completingWallet, preparedTransaction)
+  signAndSubmitTransaction(completingWallet, preparedTransaction)
 }
 
 function getWalletAddress(wallet) {
   return typeof(wallet) == 'string' ? wallet : wallet.address
 }
 
-async function signTransaction(wallet, preparedTransaction) {
+async function signAndSubmitTransaction(wallet, preparedTransaction) {
   console.log("preparedTransaction transaction details:", preparedTransaction)
   signed = wallet.sign(preparedTransaction)
   const tx = await client.submitAndWait(signed.tx_blob)
