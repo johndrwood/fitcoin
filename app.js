@@ -60,6 +60,30 @@ async function cashCheck(wallet, amount, transactionHash) {
   signTransaction(wallet, preparedTransaction)
 }
 
+async function createEscrow(sendingWallet, amount, receivingWallet, condition, cancelAfter) {
+  const preparedTransaction = await client.autofill({
+    "Account": sendingWallet.address,
+    "TransactionType": "EscrowCreate",
+    "Amount": amount,
+    "Destination": getWalletAddress(receivingWallet),
+    "Condition": condition,
+    "CancelAfter": cancelAfter
+  })
+  signTransaction(sendingWallet, preparedTransaction)
+}
+
+async function completeEscrow(completingWallet, condition, fulfillment, offerSequence) {
+  const preparedTransaction = await client.autofill({
+    "Account": completingWallet.address,
+    "Owner": completingWallet.address,
+    "TransactionType": "EscrowFinish",
+    "Condition": condition,
+    "Fulfillment": fulfillment,
+    "OfferSequence": offerSequence
+  })
+  signTransaction(completingWallet, preparedTransaction)
+}
+
 function getWalletAddress(wallet) {
   return typeof(wallet) == 'string' ? wallet : wallet.address
 }
