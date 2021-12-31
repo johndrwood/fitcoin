@@ -2,6 +2,8 @@
   "name": "fitcoin",
   "version": "1.0.0",
   "devDependencies": {
+    "crypto": "^1.0.1",
+    "five-bells-condition": "^5.0.1",
     "ws": "^8.4.0",
     "xrpl": "^2.1.0"
   }
