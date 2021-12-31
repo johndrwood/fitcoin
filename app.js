@@ -84,6 +84,20 @@ async function completeEscrow(completingWallet, condition, fulfillment, offerSeq
   signAndSubmitTransaction(completingWallet, preparedTransaction)
 }
 
+async function configureIssuer(coldWallet, domain) {
+  const preparedTransaction = await client.autofill({
+    "TransactionType": "AccountSet",
+    "Account": coldWallet.address,
+    "TransferRate": 0,
+    "TickSize": 5,
+    "Domain": bytesToHex(new TextEncoder().encode(domain)).toUpperCase(),
+    "SetFlag": xrpl.AccountSetAsfFlags.asfDefaultRipple,
+    "Flags": (xrpl.AccountSetTfFlags.tfDisallowXRP |
+             xrpl.AccountSetTfFlags.tfRequireDestTag)
+  })
+  signAndSubmitTransaction(coldWallet, preparedTransaction)
+}
+
 function getWalletAddress(wallet) {
   return typeof(wallet) == 'string' ? wallet : wallet.address
 }
@@ -93,4 +107,8 @@ async function signAndSubmitTransaction(wallet, preparedTransaction) {
   signed = wallet.sign(preparedTransaction)
   const tx = await client.submitAndWait(signed.tx_blob)
   console.log("Completed transaction details:", tx)
+}
+
+function bytesToHex(bytes) {
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
 }
