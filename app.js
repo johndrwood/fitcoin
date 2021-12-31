@@ -29,7 +29,7 @@ async function getBalance(wallet) {
   console.log(`Wallet balance is ${response}`)
 }
 
-async function sendFunds(sendingWallet, amount, receivingWallet, asCheck = false) {
+async function sendFunds(sendingWallet, amount, receivingWallet, asCheck = false, currency = null) {
   let transactionData = {
     "TransactionType": "Payment",
     "Account": sendingWallet.address,
@@ -39,7 +39,16 @@ async function sendFunds(sendingWallet, amount, receivingWallet, asCheck = false
     transactionData.TransactionType = "CheckCreate"
     transactionData.SendMax = amount
   } else {
-    transactionData.Amount = amount
+    if (currency) {
+      transactionData.Amount = {
+        "currency": currency,
+        "value": amount,
+        "issuer": sendingWallet.address
+      }
+      transactionData.DestinationTag = 1
+    } else {
+      transactionData.Amount = amount
+    }
   }
   const preparedTransaction = await client.autofill(transactionData)
   signAndSubmitTransaction(sendingWallet, preparedTransaction)
@@ -84,7 +93,13 @@ async function completeEscrow(completingWallet, condition, fulfillment, offerSeq
   signAndSubmitTransaction(completingWallet, preparedTransaction)
 }
 
-async function configureIssuer(coldWallet, domain) {
+async function createToken(issuingWallet, receivingWallet, currencyCode) {
+  await configureIssuer(issuingWallet)
+  await tokenHotWallet(receivingWallet)
+  await trustLine(issuingWallet, receivingWallet, currencyCode)
+}
+
+async function configureIssuer(coldWallet, domain = "example.net") {
   const preparedTransaction = await client.autofill({
     "TransactionType": "AccountSet",
     "Account": coldWallet.address,
@@ -96,6 +111,40 @@ async function configureIssuer(coldWallet, domain) {
              xrpl.AccountSetTfFlags.tfRequireDestTag)
   })
   signAndSubmitTransaction(coldWallet, preparedTransaction)
+}
+
+async function tokenHotWallet(hotWallet, domain = "example.net") {
+  const preparedTransaction = await client.autofill({
+    "TransactionType": "AccountSet",
+    "Account": hotWallet.address,
+    "Domain": bytesToHex(new TextEncoder().encode(domain)).toUpperCase(),
+    "SetFlag": xrpl.AccountSetAsfFlags.asfRequireAuth,
+    "Flags": (xrpl.AccountSetTfFlags.tfDisallowXRP |
+             xrpl.AccountSetTfFlags.tfRequireDestTag)
+  })
+  signAndSubmitTransaction(hotWallet, preparedTransaction)
+}
+
+async function trustLine(coldWallet, hotWallet, currencyCode) {
+  const preparedTransaction = await client.autofill({
+    "TransactionType": "TrustSet",
+    "Account": hotWallet.address,
+    "LimitAmount": {
+      "currency": currencyCode,
+      "issuer": coldWallet.address,
+      "value": "10000000000"
+    }
+  })
+  signAndSubmitTransaction(hotWallet, preparedTransaction)
+}
+
+async function tokenBalance(wallet) {
+  const accountResult = await client.request({
+    command: "account_lines",
+    account: wallet.address,
+    ledger_index: "validated"
+  })
+  console.log(accountResult.result.lines)
 }
 
 function getWalletAddress(wallet) {
