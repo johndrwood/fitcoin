@@ -125,14 +125,14 @@ async function tokenHotWallet(hotWallet, domain = "example.net") {
   signAndSubmitTransaction(hotWallet, preparedTransaction)
 }
 
-async function trustLine(coldWallet, hotWallet, currencyCode) {
+async function trustLine(coldWallet, hotWallet, currencyCode, limit = "10000000000" ) {
   const preparedTransaction = await client.autofill({
     "TransactionType": "TrustSet",
     "Account": hotWallet.address,
     "LimitAmount": {
       "currency": currencyCode,
-      "value": "10000000000"
       "issuer": getWalletAddress(coldWallet),
+      "value": limit
     }
   })
   signAndSubmitTransaction(hotWallet, preparedTransaction)
