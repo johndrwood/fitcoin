@@ -41,6 +41,11 @@ const handleTransaction = function(data) {
     case "CheckCash":
       console.log(`You have cashed a check for ${data.transaction.Amount} from ${data.transaction.Account}.`)
       break;
+    case "AccountSet":
+      break;
+    case "TrustSet":
+      console.log(`You been set up for the token "${data.transaction.LimitAmount.currency}".`)
+      break;
     default:
       console.log("You have been sent a transaction of unknown type.")
   }
