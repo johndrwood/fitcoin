@@ -43,7 +43,7 @@ async function sendFunds(sendingWallet, amount, receivingWallet, {asCheck = fals
       transactionData.Amount = {
         "currency": currency,
         "value": amount,
-        "issuer": sendingWallet.address
+        "issuer": getWalletAddress(issuingWallet)
       }
       transactionData.DestinationTag = 1
     } else {
@@ -131,8 +131,8 @@ async function trustLine(coldWallet, hotWallet, currencyCode) {
     "Account": hotWallet.address,
     "LimitAmount": {
       "currency": currencyCode,
-      "issuer": coldWallet.address,
       "value": "10000000000"
+      "issuer": getWalletAddress(coldWallet),
     }
   })
   signAndSubmitTransaction(hotWallet, preparedTransaction)
@@ -141,7 +141,7 @@ async function trustLine(coldWallet, hotWallet, currencyCode) {
 async function tokenBalance(wallet) {
   const accountResult = await client.request({
     command: "account_lines",
-    account: wallet.address,
+    account: getWalletAddress(wallet),
     ledger_index: "validated"
   })
   console.log(accountResult.result.lines)
