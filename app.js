@@ -29,7 +29,7 @@ async function getBalance(wallet) {
   console.log(`Wallet balance is ${response}`)
 }
 
-async function sendFunds(sendingWallet, amount, receivingWallet, asCheck = false, currency = null) {
+async function sendFunds(sendingWallet, amount, receivingWallet, {asCheck = false, currency = null, issuingWallet = null}) {
   let transactionData = {
     "TransactionType": "Payment",
     "Account": sendingWallet.address,
