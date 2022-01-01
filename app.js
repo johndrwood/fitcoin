@@ -93,8 +93,7 @@ async function completeEscrow(completingWallet, condition, fulfillment, offerSeq
   signAndSubmitTransaction(completingWallet, preparedTransaction)
 }
 
-async function createToken(issuingWallet, receivingWallet, currencyCode) {
-  await configureIssuer(issuingWallet)
+async function connectToken(issuingWallet, receivingWallet, currencyCode) {
   await tokenHotWallet(receivingWallet)
   await trustLine(issuingWallet, receivingWallet, currencyCode)
 }
