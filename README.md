@@ -10,8 +10,8 @@ Functionality below is based on the [XRP Ledger JS tutorial](https://xrpl.org/ge
 1. Start up the NodeJS REPL `node`
 1. Load the code into the REPL:
 	1. `.load app.js` for all of the ledger functionality
-	1. `.load ws.js` to listen for wallet activity using WebSockets
-	1. `.load sc.js` to be able to set conditions for smart contracts
+	1. `.load ws.js` to listen for wallet activity using WebSockets _(optional)_
+	1. `.load sc.js` to be able to set conditions for smart contracts _(optional)_
 
 ## NodeJS REPL API
 
@@ -80,11 +80,11 @@ Send funds to another wallet. Can optionally be sent as a check or as a custom t
   - `String` for the number of tokens to send. Sent in "drops" of XRP, where 1,000,000 drops equals 1 XRP.
 - receivingWallet
   - The receiving wallet's address or wallet object.
-- asCheck _optional_
+- asCheck _(optional)_
   - `Boolean` indicating if transaction is a check. Defaults to `false`.
-- currency _optional_
+- currency _(optional)_
   - `String` representing an alternate token currency. Defaults to `null` which sends as XRP.
-- issuingWallet _optional_
+- issuingWallet _(optional)_
   - The wallet address or wallet object for the issung wallet of the alternate token. Defaults to `null`.
 
 ```
