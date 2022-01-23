@@ -4,7 +4,7 @@ Functionality below is based on the [XRP Ledger JS tutorial](https://xrpl.org/ge
 
 ## Setup
 
-1. Clone the repo with `git@github.com:johndrwood/fitcoin.git`
+1. Clone the repo with `git clone https://github.com/johndrwood/fitcoin.git`
 1. `cd fitcoin`
 1. Install the npm packages `npm install`
 1. Start up the NodeJS REPL `node`
