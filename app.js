@@ -2,6 +2,8 @@ const xrpl = require("xrpl")
 
 let client = null
 
+// "Public" methods
+
 async function connect() {
   try {
     const PUBLIC_TEST_SERVER = "wss://s.altnet.rippletest.net:51233"
@@ -12,7 +14,6 @@ async function connect() {
     console.log("Could not connect to test server")
   }
 }
-connect()
 
 async function disconnect() {
   client.disconnect()
@@ -24,12 +25,12 @@ async function createAndFundWallet() {
   return response.wallet
 }
 
-async function getBalance(wallet) {
+async function checkBalance(wallet) {
   let response = await client.getXrpBalance(getWalletAddress(wallet))
   console.log(`Wallet balance is ${response}`)
 }
 
-async function sendFunds(sendingWallet, amount, receivingWallet, {asCheck = false, currency = null, issuingWallet = null}) {
+async function sendFunds(sendingWallet, amount, receivingWallet, {asCheck = false, currency = null, issuingWallet = null} = {}) {
   let transactionData = {
     "TransactionType": "Payment",
     "Account": sendingWallet.address,
@@ -93,11 +94,6 @@ async function completeEscrow(completingWallet, condition, fulfillment, offerSeq
   signAndSubmitTransaction(completingWallet, preparedTransaction)
 }
 
-async function connectToken(issuingWallet, receivingWallet, currencyCode) {
-  await tokenHotWallet(receivingWallet)
-  await trustLine(issuingWallet, receivingWallet, currencyCode)
-}
-
 async function configureIssuer(coldWallet, domain = "example.net") {
   const preparedTransaction = await client.autofill({
     "TransactionType": "AccountSet",
@@ -110,6 +106,33 @@ async function configureIssuer(coldWallet, domain = "example.net") {
              xrpl.AccountSetTfFlags.tfRequireDestTag)
   })
   signAndSubmitTransaction(coldWallet, preparedTransaction)
+}
+
+async function connectToken(issuingWallet, receivingWallet, currencyCode) {
+  await tokenHotWallet(receivingWallet)
+  await trustLine(issuingWallet, receivingWallet, currencyCode)
+}
+
+async function checkTokenBalance(wallet) {
+  const accountResult = await client.request({
+    command: "account_lines",
+    account: getWalletAddress(wallet),
+    ledger_index: "validated"
+  })
+  console.log(accountResult.result.lines)
+}
+
+// "Private" methods
+
+function getWalletAddress(wallet) {
+  return typeof(wallet) == 'string' ? wallet : wallet.address
+}
+
+async function signAndSubmitTransaction(wallet, preparedTransaction) {
+  console.log("preparedTransaction transaction details:", preparedTransaction)
+  signed = wallet.sign(preparedTransaction)
+  const tx = await client.submitAndWait(signed.tx_blob)
+  console.log("Completed transaction details:", tx)
 }
 
 async function tokenHotWallet(hotWallet, domain = "example.net") {
@@ -135,26 +158,6 @@ async function trustLine(coldWallet, hotWallet, currencyCode, limit = "100000000
     }
   })
   signAndSubmitTransaction(hotWallet, preparedTransaction)
-}
-
-async function tokenBalance(wallet) {
-  const accountResult = await client.request({
-    command: "account_lines",
-    account: getWalletAddress(wallet),
-    ledger_index: "validated"
-  })
-  console.log(accountResult.result.lines)
-}
-
-function getWalletAddress(wallet) {
-  return typeof(wallet) == 'string' ? wallet : wallet.address
-}
-
-async function signAndSubmitTransaction(wallet, preparedTransaction) {
-  console.log("preparedTransaction transaction details:", preparedTransaction)
-  signed = wallet.sign(preparedTransaction)
-  const tx = await client.submitAndWait(signed.tx_blob)
-  console.log("Completed transaction details:", tx)
 }
 
 function bytesToHex(bytes) {
