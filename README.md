@@ -42,13 +42,12 @@ createAndFundWallet().then(response => wallet = response)
 ```
 ---
 
-### getBalance
-Get the XRP balance of a referenced wallet.
+### checkBalance
+Check the XRP balance of a wallet.
 
 #### Parameters
 - wallet
   - Either a `String` representing the wallet's `classicAddress` or a [Wallet object](https://js.xrpl.org/classes/Wallet.html).
-
 ```
 getBalance("abcdefghijklABCDEFGHIJKL1234567890")
 getBalance(wallet)
@@ -71,7 +70,6 @@ Send funds to another wallet. Can optionally be sent as a check or as a custom t
   - `String` representing an alternate token currency. Defaults to `null` which sends as XRP.
 - issuingWallet _optional_
   - The wallet address or wallet object for the issung wallet of the alternate token. Defaults to `null`.
-
 ```
 sendFunds(sendingWallet, "50000", receivingWallet)
 sendFunds(sendingWallet, "50000", receivingWallet, true)
@@ -127,5 +125,55 @@ Set up a smart contract using an escrow. Requires a cryptographic condition.
   - `Number` for the `Sequence` number from the **createEscrow** transaction.
 ```
 completeEscrow(completingWallet, "A02580200B83831A2132AE114725779D7A57BFB661960CD433CB2958B7DEB89F6D96AB86810120", "A02280209A9C1F839062D9541FF76587EC082B3DF6CEB4070790330D91687037A490CB11", 1)
+```
+---
+
+### configureIssuer
+Set up the wallet for issuing a new token.
+
+#### Parameters
+- coldWallet
+  - The issuing wallet's address or wallet object.
+```
+configureIssuer(wallet)
+```
+---
+
+### tokenHotWallet
+Set up a wallet to receive tokens from the issuing wallet.
+
+#### Parameters
+- hotWallet
+  - The receiving wallet's address or wallet object.
+```
+tokenHotWallet(wallet)
+```
+---
+
+### trustLine
+Create a trust line between the issuing and receiving wallets.
+
+#### Parameters
+- coldWallet
+  - The issuing wallet's address or wallet object.
+- hotWallet
+  - The receiving wallet's address or wallet object.
+- currencyCode
+  - `String` fot the currency code of the new token.
+- limit _optional_
+  - `String` representing the maximum number of tokens that can exist. Default is "10000000000".
+```
+trustLine(coldWallet, hotWallet, "FIT")
+```
+---
+
+### checkTokenBalance
+Check the token balance of a wallet.
+
+#### Parameters
+- wallet
+  - The wallet's address or wallet object.
+```
+checkTokenBalance(wallet)
 ```
 ---
