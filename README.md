@@ -59,7 +59,7 @@ getBalance(wallet)
 ---
 
 ### subscribe
-Subscribe to transaction evetns on a wallet. Requires a Websocket set up with `.load ws.js`.
+Subscribe to transaction events on a wallet. Requires a Websocket set up with `.load ws.js`.
 
 #### Parameters
 - wallet
@@ -80,17 +80,18 @@ Send funds to another wallet. Can optionally be sent as a check or as a custom t
   - `String` for the number of tokens to send. Sent in "drops" of XRP, where 1,000,000 drops equals 1 XRP.
 - receivingWallet
   - The receiving wallet's address or wallet object.
-- asCheck _(optional)_
-  - `Boolean` indicating if transaction is a check. Defaults to `false`.
-- currency _(optional)_
-  - `String` representing an alternate token currency. Defaults to `null` which sends as XRP.
-- issuingWallet _(optional)_
-  - The wallet address or wallet object for the issung wallet of the alternate token. Defaults to `null`.
+- options _(optional)_
+  - asCheck _(optional)_
+    - `Boolean` indicating if transaction is a check. Defaults to `false`.
+  - currency _(optional)_
+    - `String` representing an alternate token currency. Defaults to `null` which sends as XRP.
+  - issuingWallet _(optional)_
+    - The wallet address or wallet object for the issung wallet of the alternate token. Defaults to `null`.
 
 ```
 sendFunds(sendingWallet, "50000", receivingWallet)
-sendFunds(sendingWallet, "50000", receivingWallet, true)
-sendFunds(sendingWallet, "50000", receivingWallet, false, "FIT", issuingWallet)
+sendFunds(sendingWallet, "50000", receivingWallet, { asCheck: true })
+sendFunds(sendingWallet, "50000", receivingWallet, { currency: "FIT", issuingWallet: issuingWallet })
 ```
 ---
 
@@ -103,7 +104,7 @@ Accept payment sent as a check. Can be accepted for any amount up to the max amo
 - amount
   - `String` representing the amount to be accepted.
 - transactionHash
-  - `String` of the transaction hash in which the check was sent
+  - `String` of the transaction hash in which the check was sent.
 
 ```
 cashCheck(wallet, "25000", "330BCF9DE6244E95F63EE59195F742A0A06D17ABCBF79962D5F49EB8F4EDCF78")
@@ -131,7 +132,7 @@ createEscrow(sendingWallet, "1000", receivingWallet, "A02580200B83831A2132AE1147
 ---
 
 ### completeEscrow
-Set up a smart contract using an escrow. Requires a cryptographic condition.
+Complete smart contract by fulfulling the cryptographic condition.
 
 #### Parameters
 - completingWallet
@@ -149,7 +150,7 @@ completeEscrow(completingWallet, "A02580200B83831A2132AE114725779D7A57BFB661960C
 ---
 
 ### configureIssuer
-Set up the wallet for issuing a new token.
+Set up a wallet for issuing a new token.
 
 #### Parameters
 - coldWallet
