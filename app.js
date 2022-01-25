@@ -27,7 +27,7 @@ async function createAndFundWallet() {
 
 async function checkBalance(wallet) {
   let response = await client.getXrpBalance(getWalletAddress(wallet))
-  console.log(`Wallet balance is ${response}`)
+  console.log(`Wallet balance is ${response} XRP.`)
 }
 
 async function sendFunds(sendingWallet, amount, receivingWallet, {asCheck = false, currency = null, issuingWallet = null} = {}) {
