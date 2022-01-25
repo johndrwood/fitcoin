@@ -53,8 +53,8 @@ Check the XRP balance of a wallet.
   - Either a `String` representing the wallet's `classicAddress` or a [Wallet object](https://js.xrpl.org/classes/Wallet.html).
 
 ```
-getBalance("abcdefghijklABCDEFGHIJKL1234567890")
-getBalance(wallet)
+checkBalance("abcdefghijklABCDEFGHIJKL1234567890")
+checkBalance(wallet)
 ```
 ---
 
